@@ -1,0 +1,37 @@
+﻿@page "/"
+@using BlazoriseLab.Data
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+
+<SelectList Data="@allBrands" TextField="@((item)=>item.Name)" ValueField="@((item)=>item)" SelectedValue="@SelectedBrand" SelectedValueChanged="@MyListValueChangedHandler" />
+
+@code {
+
+    private IList<VehicleBrand> allBrands;
+
+    private int SelectedBrandId;
+
+    private VehicleBrand SelectedBrand;
+
+    protected override void OnInitialized()
+    {
+        allBrands = new List<VehicleBrand>
+        {
+            new VehicleBrand{ Id=1, Name="Toyota"},
+            new VehicleBrand{ Id=2, Name="Lexus"},
+            new VehicleBrand{ Id=3, Name="Kia"},
+        };
+
+        SelectedBrand = allBrands.FirstOrDefault();
+    }
+
+    void MyListValueChangedHandler(object newValue)
+    {
+        SelectedBrand = (VehicleBrand)newValue; // exception! newValue is of type string
+        StateHasChanged();
+    }
+
+}
