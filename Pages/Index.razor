@@ -5,12 +5,61 @@
 
 Welcome to your new app.
 
+<Card Margin="Margin.Is4.OnY">
+    <CardHeader>
+        <CardTitle><a href="https://github.com/stsrki/Blazorise/issues/292" target="_blank">issue #292</a></CardTitle>
+    </CardHeader>
+    <CardBody>
+        <SelectList Data="@allBrands" TextField="@((item)=>item.Name)" ValueField="@((item)=>item)" SelectedValue="@SelectedBrand" SelectedValueChanged="@MyListValueChangedHandler" />
+    </CardBody>
+</Card>
 
-<SelectList Data="@allBrands" TextField="@((item)=>item.Name)" ValueField="@((item)=>item)" SelectedValue="@SelectedBrand" SelectedValueChanged="@MyListValueChangedHandler" />
+
+
+<Card Margin="Margin.Is4.OnY">
+    <CardHeader>
+        <CardTitle><a href="https://github.com/stsrki/Blazorise/issues/293" target="_blank">issue #293</a></CardTitle>
+    </CardHeader>
+    <CardBody>
+        <DataGrid TItem="VehicleModel" Data="@allModels" AllowEdit="true">
+            <ChildContent>
+                <DataGridCommandColumn TItem="VehicleModel">
+                </DataGridCommandColumn>
+                <DataGridColumn Caption="#" TItem="VehicleModel" Field="@nameof( VehicleModel.Id )" />
+                <DataGridColumn Caption="Brand" TItem="VehicleModel" Field="@nameof( VehicleModel.BrandId )" AllowEdit="true">
+                    <DisplayTemplate>
+                        @{
+                            var brandId = (context as VehicleModel)?.BrandId;
+                            @(allBrands.FirstOrDefault(x => x.Id == brandId)?.Name)
+                        }
+                    </DisplayTemplate>
+                    <EditTemplate>
+
+                        <SelectList Data="@allBrands"
+                                    TextField="@(i => i.Name)"
+                                    ValueField="@(i => i.Id)"
+                                    SelectedValue="@((int)((CellEditContext)context).CellValue)"
+                                    SelectedValueChanged="@(e =>
+                                                            {
+                                                                // TODO remove comment to update the value... but you should handle Cancel button first!
+                                                                //var modelId = (int)context.CellValue;
+                                                                //var model = allModels.First(x => x.Id == modelId);
+                                                                //model.BrandId = allBrands.First(x => x.Id == int.Parse(e.ToString())).Id;
+                                                            } )" />
+
+                    </EditTemplate>
+                </DataGridColumn>
+                <DataGridColumn Caption="Model" TItem="VehicleModel" Field="@nameof( VehicleModel.Name )" AllowEdit="true" />
+            </ChildContent>
+
+        </DataGrid>
+    </CardBody>
+</Card>
 
 @code {
 
     private IList<VehicleBrand> allBrands;
+    private IList<VehicleModel> allModels;
 
     private int SelectedBrandId;
 
@@ -19,10 +68,15 @@ Welcome to your new app.
     protected override void OnInitialized()
     {
         allBrands = new List<VehicleBrand>
-        {
+{
             new VehicleBrand{ Id=1, Name="Toyota"},
             new VehicleBrand{ Id=2, Name="Lexus"},
             new VehicleBrand{ Id=3, Name="Kia"},
+        };
+
+        allModels = new List<VehicleModel>
+        {
+            new VehicleModel{ Id=1, Name="Yaris", BrandId = 1},
         };
 
         SelectedBrand = allBrands.FirstOrDefault();
